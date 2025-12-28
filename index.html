@@ -231,7 +231,7 @@ function goNext(current,next){
 
 function restart(){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById("screen1").classList.add("active");
+  document.getElementById("screen1").classList.add("active');
 }
 
 // ===== FIREWORKS LOGIC =====
@@ -291,32 +291,6 @@ class Spark{
   }
   update(){this.x+=this.vx; this.y+=this.vy; this.vy+=0.02; this.life--;}
   draw(){ctx.fillStyle=this.color; ctx.fillRect(this.x,this.y,3,3);}
-}
-
-class LineRay{
-  constructor(x,y,color){
-    this.x=x; this.y=y;
-    this.angle=Math.random()*Math.PI*2;
-    this.maxLength=Math.random()*200+150;
-    this.currentLength=0;
-    this.speed=Math.random()*3+2; // slower
-    this.life=80;
-    this.color=color;
-  }
-  update(){this.currentLength+=this.speed;if(this.currentLength>this.maxLength)this.currentLength=this.maxLength; this.life--;}
-  draw(){
-    ctx.save();
-    ctx.globalAlpha=this.life/80;
-    ctx.strokeStyle=this.color;
-    ctx.lineWidth=3;
-    ctx.shadowBlur=20;
-    ctx.shadowColor=this.color;
-    ctx.beginPath();
-    ctx.moveTo(this.x,this.y);
-    ctx.lineTo(this.x+Math.cos(this.angle)*this.currentLength,this.y+Math.sin(this.angle)*this.currentLength);
-    ctx.stroke();
-    ctx.restore();
-  }
 }
 
 class Rocket{
@@ -390,25 +364,24 @@ class HighlightRocket extends Rocket{
   }
 }
 
-// ===== FIREWORKS BATCH SEQUENTIAL =====
-let batchRockets=[["left","left","right","right"],["left","left","right","right"]];
-let batchIndex=0;
-let rocketIndex=0;
+// ===== SEQUENTIAL BATCH WITH 3s DELAY AFTER POP =====
+let batchQueue=["left","left","right","right"];
+let currentIndex=0;
 
-function launchBatch(){
-  if(batchIndex>=batchRockets.length) batchIndex=0;
-  let side=batchRockets[batchIndex][rocketIndex];
-  if(Math.random()<0.5) rockets.push(new Rocket(side)); else rockets.push(new HighlightRocket(side));
-  rocketIndex++;
-  if(rocketIndex>=batchRockets[batchIndex].length){
-    rocketIndex=0;
-    batchIndex++;
-    setTimeout(launchBatch,2000); // delay before next batch
-  } else {
-    setTimeout(launchBatch,1000); // delay between each rocket
+function launchRocketSequentially(){
+  if(currentIndex>=batchQueue.length){
+    currentIndex=0;
+    // Wait 3 seconds after the batch finishes
+    setTimeout(launchRocketSequentially,3000);
+    return;
   }
+  let side=batchQueue[currentIndex];
+  if(Math.random()<0.5) rockets.push(new Rocket(side)); else rockets.push(new HighlightRocket(side));
+  currentIndex++;
+  // Launch next rocket after 1 second
+  setTimeout(launchRocketSequentially,1000);
 }
-launchBatch();
+launchRocketSequentially();
 
 // ===== FIREWORKS ANIMATE =====
 function animate(){

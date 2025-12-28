@@ -227,7 +227,6 @@ function restart(){
 const canvas=document.getElementById("fireworks");
 const ctx=canvas.getContext("2d");
 const flashDiv=document.getElementById("fireworksFlash");
-
 function resize(){canvas.width=innerWidth;canvas.height=innerHeight;} 
 resize(); 
 addEventListener("resize",resize);
@@ -261,7 +260,7 @@ class Trail{
 class Spark{
   constructor(x,y,color){
     const a=Math.random()*Math.PI*2; 
-    const s=Math.random()*6+2;
+    const s=Math.random()*8+3; 
     this.x=x; this.y=y; this.vx=Math.cos(a)*s; this.vy=Math.sin(a)*s; this.life=140; this.color=color;
   }
   update(){this.x+=this.vx; this.y+=this.vy; this.vy+=0.01; this.life--;}
@@ -274,18 +273,19 @@ class LineRay{
     this.angle=Math.random()*Math.PI*2;
     this.maxLength=Math.random()*200+150;
     this.currentLength=0;
-    this.speed=Math.random()*2+1.5;
+    this.speed=Math.random()*3+2;
     this.life=80; this.color=color;
   }
   update(){this.currentLength+=this.speed;if(this.currentLength>this.maxLength)this.currentLength=this.maxLength; this.life--;}
   draw(){ctx.save(); ctx.globalAlpha=this.life/80; ctx.strokeStyle=this.color; ctx.lineWidth=3; ctx.shadowBlur=20; ctx.shadowColor=this.color; ctx.beginPath(); ctx.moveTo(this.x,this.y); ctx.lineTo(this.x+Math.cos(this.angle)*this.currentLength,this.y+Math.sin(this.angle)*this.currentLength); ctx.stroke(); ctx.restore();}
 }
 
+// ===== ROCKET CLASS =====
 class Rocket{
   constructor(side){
     this.x = side==="left"? 50+Math.random()*50 : innerWidth-100-Math.random()*50;
     this.y = canvas.height;
-    this.vy = 0.8+Math.random()*0.7;
+    this.vy = 1.4+Math.random()*0.8; 
     this.vx = (Math.random()-0.5)*0.6;
     this.targetY=Math.random()*canvas.height*0.35+80;
     this.exploded=false;
@@ -299,13 +299,120 @@ class Rocket{
     if(this.y<=this.targetY && !this.exploded){ this.explode(); this.exploded=true; }
   }
   draw(){ctx.fillStyle="#ff9f1c"; ctx.fillRect(this.x,this.y,5,16);}
+  
+  // ===== 10 DIFFERENT EXPLOSION TYPES =====
   explode(){
     flashAlpha=0.6; flashDiv.style.transition='opacity 0.4s ease-out'; flashDiv.style.opacity=flashAlpha;
     setTimeout(()=>{flashDiv.style.opacity=0;},400);
+
+    const type=Math.floor(Math.random()*10);
+    switch(type){
+      case 0: this.classicSparks(); break;
+      case 1: this.lineRays(); break;
+      case 2: this.spiralBurst(); break;
+      case 3: this.carnationFlower(); break;
+      case 4: this.multiColorShower(); break;
+      case 5: this.neonGlow(); break;
+      case 6: this.randomSwirl(); break;
+      case 7: this.sparkRing(); break;
+      case 8: this.starCluster(); break;
+      case 9: this.largeWave(); break;
+    }
+  }
+
+  classicSparks(){
     for(let i=0;i<150;i++){
-      let color=Math.random()<0.85?pinkColors[Math.floor(Math.random()*pinkColors.length)]:accentColors[Math.floor(Math.random()*accentColors.length)];
+      let color=pinkColors[Math.floor(Math.random()*pinkColors.length)];
       particles.push(new Spark(this.x,this.y,color));
       particles.push(new LineRay(this.x,this.y,color));
+    }
+  }
+  
+  lineRays(){
+    for(let i=0;i<12;i++){
+      let color=pinkColors[Math.floor(Math.random()*pinkColors.length)];
+      particles.push(new LineRay(this.x,this.y,color));
+    }
+  }
+
+  spiralBurst(){
+    for(let i=0;i<120;i++){
+      let t=i*0.1;
+      let sx=this.x+50*Math.cos(t)*Math.sin(t*2);
+      let sy=this.y+50*Math.sin(t)*Math.cos(t*2);
+      let color=pinkColors[Math.floor(Math.random()*pinkColors.length)];
+      particles.push(new Spark(sx,sy,color));
+    }
+  }
+
+  carnationFlower(){
+    for(let i=0;i<250;i++){
+      let angle=(i/250)*Math.PI*4;
+      let radius=50*Math.sqrt(i/250);
+      let sx=this.x+radius*Math.cos(angle);
+      let sy=this.y+radius*Math.sin(angle);
+      let color=pinkColors[Math.floor(Math.random()*pinkColors.length)];
+      particles.push(new Spark(sx,sy,color));
+    }
+  }
+
+  multiColorShower(){
+    const colors=["#ff4f9a","#ff6fae","#ff85c0","#ffb3d1","#ff80aa","#ff9fcf","#fff9c4","#a0ffe0","#9fcfff"];
+    for(let i=0;i<150;i++){
+      let color=colors[Math.floor(Math.random()*colors.length)];
+      particles.push(new Spark(this.x,this.y,color));
+      particles.push(new LineRay(this.x,this.y,color));
+    }
+  }
+
+  neonGlow(){
+    for(let i=0;i<100;i++){
+      let color=pinkColors[Math.floor(Math.random()*pinkColors.length)];
+      let spark=new Spark(this.x,this.y,color);
+      particles.push(spark);
+      particles.push(new LineRay(this.x,this.y,color));
+    }
+  }
+
+  randomSwirl(){
+    for(let i=0;i<180;i++){
+      let angle=Math.random()*Math.PI*2;
+      let radius=Math.random()*60;
+      let sx=this.x+radius*Math.cos(angle);
+      let sy=this.y+radius*Math.sin(angle);
+      let color=pinkColors[Math.floor(Math.random()*pinkColors.length)];
+      particles.push(new Spark(sx,sy,color));
+    }
+  }
+
+  sparkRing(){
+    for(let i=0;i<100;i++){
+      let angle=(i/100)*Math.PI*2;
+      let radius=40;
+      let sx=this.x+radius*Math.cos(angle);
+      let sy=this.y+radius*Math.sin(angle);
+      let color=pinkColors[Math.floor(Math.random()*pinkColors.length)];
+      particles.push(new Spark(sx,sy,color));
+    }
+  }
+
+  starCluster(){
+    for(let i=0;i<60;i++){
+      let sx=this.x+Math.random()*50-25;
+      let sy=this.y+Math.random()*50-25;
+      let color=pinkColors[Math.floor(Math.random()*pinkColors.length)];
+      particles.push(new Spark(sx,sy,color));
+      particles.push(new LineRay(sx,sy,color));
+    }
+  }
+
+  largeWave(){
+    for(let i=0;i<200;i++){
+      let t=i*0.05;
+      let sx=this.x+Math.sin(t*2)*70;
+      let sy=this.y+Math.cos(t*3)*70;
+      let color=pinkColors[Math.floor(Math.random()*pinkColors.length)];
+      particles.push(new Spark(sx,sy,color));
     }
   }
 }
@@ -319,10 +426,10 @@ function launchBatch(){
   rockets.push(new Rocket("left"));
   rockets.push(new Rocket("right"));
   rockets.push(new Rocket("right"));
-  setTimeout(()=>{ batchActive=false; },8000);
+  setTimeout(()=>{ batchActive=false; },12000); // 12s delay
 }
 launchBatch();
-setInterval(launchBatch, 12000);
+setInterval(launchBatch, 16000);
 
 // ===== FIREWORKS ANIMATE =====
 function animate(){

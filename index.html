@@ -6,11 +6,7 @@
 <title>🌸 Romantic First Page 🌸</title>
 <style>
 /* ===== RESET ===== */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 /* ===== BODY ===== */
 body {
@@ -22,12 +18,7 @@ body {
 }
 
 /* ===== MUSIC BUTTON ===== */
-#musicOverlay {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 20;
-}
+#musicOverlay { position: fixed; top: 20px; right: 20px; z-index: 20; }
 #musicOverlay button {
   padding: 12px 24px;
   font-size: 16px;
@@ -39,10 +30,7 @@ body {
   cursor: pointer;
   transition: 0.3s;
 }
-#musicOverlay button:hover {
-  transform: scale(1.05);
-  background: #ff0f7a;
-}
+#musicOverlay button:hover { transform: scale(1.05); background: #ff0f7a; }
 
 /* ===== SCREENS ===== */
 .screen {
@@ -60,95 +48,28 @@ body {
   transition: 1s;
   z-index: 5;
 }
-.screen.active {
-  opacity: 1;
-  pointer-events: auto;
-}
-.title {
-  font-size: 2.4rem;
-  color: #ff2f92;
-  margin-bottom: 10px;
-  font-weight: 700;
-  animation: fadeUp 0.8s ease forwards;
-}
-.subtitle {
-  font-size: 1.2rem;
-  color: #c72672;
-  animation: fadeUp 1s ease forwards;
-}
+.screen.active { opacity: 1; pointer-events: auto; }
+.title { font-size: 2.4rem; color: #ff2f92; margin-bottom: 10px; font-weight: 700; animation: fadeUp 0.8s ease forwards; }
+.subtitle { font-size: 1.2rem; color: #c72672; animation: fadeUp 1s ease forwards; }
 
 /* ===== PROFILE ===== */
-.profileWrap {
-  width: 180px;
-  height: 180px;
-  margin: 25px auto;
-  border-radius: 50%;
-  border: 5px solid #ff9ac4;
-  overflow: hidden;
-  animation: smoothPulse 4s infinite ease-in-out;
-}
-.profilePic {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
+.profileWrap { width: 180px; height: 180px; margin: 25px auto; border-radius: 50%; border: 5px solid #ff9ac4; overflow: hidden; animation: smoothPulse 4s infinite ease-in-out; }
+.profilePic { width: 100%; height: 100%; object-fit: cover; }
 
 /* ===== BUTTONS ===== */
-.btn {
-  margin-top: 25px;
-  padding: 15px 40px;
-  background: #ff2f92;
-  color: white;
-  border: none;
-  border-radius: 50px;
-  font-size: 18px;
-  cursor: pointer;
-  transition: 0.4s;
-}
-.btn:hover {
-  transform: scale(1.12) translateY(-3px);
-  background: #ff0f7a;
-  box-shadow: 0 0 20px #ff8ac6;
-}
+.btn { margin-top: 25px; padding: 15px 40px; background: #ff2f92; color: white; border: none; border-radius: 50px; font-size: 18px; cursor: pointer; transition: 0.4s; }
+.btn:hover { transform: scale(1.12) translateY(-3px); background: #ff0f7a; box-shadow: 0 0 20px #ff8ac6; }
 
 /* ===== TYPING MESSAGES ===== */
-.msg {
-  font-size: 1.25rem;
-  width: 80%;
-  max-width: 750px;
-  color: #5f0037;
-  line-height: 1.9;
-  opacity: 1;
-  margin-bottom: 25px;
-  white-space: pre-wrap;
-  overflow: hidden;
-}
+.msg { font-size: 1.25rem; width: 80%; max-width: 750px; color: #5f0037; line-height: 1.9; opacity: 1; margin-bottom: 25px; white-space: pre-wrap; overflow: hidden; }
 
 /* ===== ANIMATIONS ===== */
-@keyframes fadeUp {
-  from {opacity: 0; transform: translateY(40px);}
-  to {opacity: 1; transform: translateY(0);}
-}
-@keyframes smoothPulse {
-  0%,100% {transform: scale(1);}
-  50% {transform: scale(1.05);}
-}
+@keyframes fadeUp { from {opacity:0; transform:translateY(40px);} to {opacity:1; transform:translateY(0);} }
+@keyframes smoothPulse { 0%,100% {transform:scale(1);} 50% {transform:scale(1.05);} }
 
 /* ===== FIREWORKS CANVAS ===== */
-#fireworks {
-  position: fixed;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-}
-#fireworksFlash {
-  position: fixed;
-  inset: 0;
-  z-index: 2;
-  pointer-events: none;
-  background: white;
-  opacity: 0;
-}
+#fireworks { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
+#fireworksFlash { position: fixed; inset: 0; z-index: 2; pointer-events: none; background: white; opacity: 0; }
 </style>
 </head>
 <body>
@@ -192,280 +113,68 @@ body {
 <script>
 // ===== MUSIC CONTROL =====
 let player;
-function onYouTubeIframeAPIReady() {
-  player = new YT.Player("bgMusic",{events:{}});
-}
-document.getElementById("playMusic").onclick = () => {
-  if(player) player.playVideo();
-  document.getElementById("musicOverlay").style.display = "none";
-};
+function onYouTubeIframeAPIReady() { player = new YT.Player("bgMusic",{events:{}}); }
+document.getElementById("playMusic").onclick = () => { if(player) player.playVideo(); document.getElementById("musicOverlay").style.display = "none"; };
 
 // ===== TYPING ANIMATION =====
-function typeText(el, text, speed=50){
-  el.textContent='';
-  let i=0;
-  let interval=setInterval(()=>{
-    el.textContent+=text[i++];
-    if(i>=text.length) clearInterval(interval);
-  }, speed);
-}
+function typeText(el, text, speed=50){ el.textContent=''; let i=0; let interval=setInterval(()=>{ el.textContent+=text[i++]; if(i>=text.length) clearInterval(interval); }, speed); }
 
 // ===== PAGE NAVIGATION =====
-function goNext(current,next){
-  document.getElementById("screen"+current).classList.remove("active");
-  let nextScreen = document.getElementById("screen"+next);
-  nextScreen.classList.add("active");
-  const msg = nextScreen.querySelector('.msg');
-  if(msg) typeText(msg,msg.dataset.text,50);
-}
-function restart(){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById("screen1").classList.add("active");
-}
+function goNext(current,next){ document.getElementById("screen"+current).classList.remove("active"); let nextScreen=document.getElementById("screen"+next); nextScreen.classList.add("active"); const msg=nextScreen.querySelector('.msg'); if(msg) typeText(msg,msg.dataset.text,50);}
+function restart(){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById("screen1").classList.add("active"); }
 
 // ===== FIREWORKS LOGIC =====
-const canvas=document.getElementById("fireworks");
-const ctx=canvas.getContext("2d");
-const flashDiv=document.getElementById("fireworksFlash");
-function resize(){canvas.width=innerWidth;canvas.height=innerHeight;} 
-resize(); 
-addEventListener("resize",resize);
+const canvas=document.getElementById("fireworks"); const ctx=canvas.getContext("2d"); const flashDiv=document.getElementById("fireworksFlash");
+function resize(){canvas.width=innerWidth; canvas.height=innerHeight;} resize(); addEventListener("resize",resize);
 
-let rockets=[], particles=[];
-const pinkColors=["#ff4f9a","#ff6fae","#ff85c0","#ffb3d1","#ff80aa","#ff9fcf"];
-const accentColors=["#fff9c4","#fffacd"];
-let flashAlpha=0;
+let rockets=[], particles=[], pinkColors=["#ff4f9a","#ff6fae","#ff85c0","#ffb3d1","#ff80aa","#ff9fcf"], accentColors=["#fff9c4","#fffacd"], flashAlpha=0;
+
+// ===== STARRY SKY =====
+let starField=[];
+class Star{
+  constructor(){ this.x=Math.random()*canvas.width; this.y=Math.random()*canvas.height; this.radius=Math.random()*1.5+0.5; this.opacity=Math.random(); this.vx=(Math.random()-0.5)*0.05; this.vy=(Math.random()-0.5)*0.05; }
+  update(){ this.x+=this.vx; this.y+=this.vy; if(this.x<0) this.x=canvas.width; if(this.x>canvas.width) this.x=0; if(this.y<0) this.y=canvas.height; if(this.y>canvas.height) this.y=0; }
+  draw(){ ctx.fillStyle=`rgba(255,255,255,${this.opacity})`; ctx.beginPath(); ctx.arc(this.x,this.y,this.radius,0,Math.PI*2); ctx.fill();}
+}
+for(let i=0;i<150;i++) starField.push(new Star());
 
 // ===== PARTICLE CLASSES =====
-class FireParticle{
-  constructor(x,y){
-    this.x=x+(Math.random()-0.5)*8;
-    this.y=y;
-    this.vx=(Math.random()-0.5)*0.4;
-    this.vy=-Math.random()*0.5;
-    this.life=50+Math.random()*30;
-    this.size=3+Math.random()*3;
-    this.color=Math.random()<0.85?pinkColors[Math.floor(Math.random()*pinkColors.length)]:accentColors[Math.floor(Math.random()*accentColors.length)];
-  }
-  update(){this.x+=this.vx; this.y+=this.vy; this.life--;}
-  draw(){ctx.fillStyle=this.color; ctx.globalAlpha=this.life/60; ctx.beginPath(); ctx.arc(this.x,this.y,this.size,0,Math.PI*2); ctx.fill(); ctx.globalAlpha=1;}
-}
+class FireParticle{ constructor(x,y){ this.x=x+(Math.random()-0.5)*8; this.y=y; this.vx=(Math.random()-0.5)*0.4; this.vy=-Math.random()*0.5; this.life=50+Math.random()*30; this.size=3+Math.random()*3; this.color=Math.random()<0.85?pinkColors[Math.floor(Math.random()*pinkColors.length)]:accentColors[Math.floor(Math.random()*accentColors.length)]; }
+update(){this.x+=this.vx; this.y+=this.vy; this.life--;} draw(){ctx.fillStyle=this.color; ctx.globalAlpha=this.life/60; ctx.beginPath(); ctx.arc(this.x,this.y,this.size,0,Math.PI*2); ctx.fill(); ctx.globalAlpha=1;}}
 
-class Trail{
-  constructor(x,y){this.x=x; this.y=y; this.life=40;}
-  update(){this.life--;}
-  draw(){ctx.fillStyle=`rgba(255,140,0,${this.life/40})`; ctx.fillRect(this.x,this.y,3,3);}
-}
+class Trail{ constructor(x,y){this.x=x; this.y=y; this.life=40;} update(){this.life--;} draw(){ctx.fillStyle=`rgba(255,140,0,${this.life/40})`; ctx.fillRect(this.x,this.y,3,3);}}
+class Spark{ constructor(x,y,color){ const a=Math.random()*Math.PI*2; const s=Math.random()*6+2; this.x=x; this.y=y; this.vx=Math.cos(a)*s; this.vy=Math.sin(a)*s; this.life=140; this.color=color; } update(){this.x+=this.vx; this.y+=this.vy; this.vy+=0.01; this.life--;} draw(){ctx.fillStyle=this.color; ctx.fillRect(this.x,this.y,3,3);}}
+class LineRay{ constructor(x,y,color){ this.x=x; this.y=y; this.angle=Math.random()*Math.PI*2; this.maxLength=Math.random()*200+150; this.currentLength=0; this.speed=Math.random()*2+1.5; this.life=80; this.color=color;} update(){this.currentLength+=this.speed;if(this.currentLength>this.maxLength)this.currentLength=this.maxLength; this.life--;} draw(){ctx.save(); ctx.globalAlpha=this.life/80; ctx.strokeStyle=this.color; ctx.lineWidth=3; ctx.shadowBlur=20; ctx.shadowColor=this.color; ctx.beginPath(); ctx.moveTo(this.x,this.y); ctx.lineTo(this.x+Math.cos(this.angle)*this.currentLength,this.y+Math.sin(this.angle)*this.currentLength); ctx.stroke(); ctx.restore();}}
 
-class Spark{
-  constructor(x,y,color){
-    const a=Math.random()*Math.PI*2; 
-    const s=Math.random()*8+3; 
-    this.x=x; this.y=y; this.vx=Math.cos(a)*s; this.vy=Math.sin(a)*s; this.life=140; this.color=color;
-  }
-  update(){this.x+=this.vx; this.y+=this.vy; this.vy+=0.01; this.life--;}
-  draw(){ctx.fillStyle=this.color; ctx.fillRect(this.x,this.y,3,3);}
-}
+class Rocket{ constructor(side){ this.x = side==="left"? 50+Math.random()*50 : innerWidth-100-Math.random()*50; this.y = canvas.height; this.vy = 1.2+Math.random()*0.5; this.vx = (Math.random()-0.5)*0.6; this.targetY=Math.random()*canvas.height*0.35+80; this.exploded=false; this.sway=Math.random()*0.03+0.015; this.angle=Math.random()*Math.PI*2; }
+update(){ this.x+=Math.sin(this.angle)*this.vx; this.angle+=this.sway; this.y-=this.vy; for(let i=0;i<6;i++) particles.push(new Trail(this.x+(Math.random()-0.5)*6,this.y+15)); for(let i=0;i<2;i++) particles.push(new FireParticle(this.x,this.y)); if(this.y<=this.targetY && !this.exploded){ this.explode(); this.exploded=true;} }
+draw(){ctx.fillStyle="#ff9f1c"; ctx.fillRect(this.x,this.y,5,16);} explode(){ flashAlpha=0.6; flashDiv.style.transition='opacity 0.4s ease-out'; flashDiv.style.opacity=flashAlpha; setTimeout(()=>{flashDiv.style.opacity=0;},400); for(let i=0;i<10;i++){ let color=pinkColors[Math.floor(Math.random()*pinkColors.length)]; for(let j=0;j<Math.random()*80+50;j++){ particles.push(new Spark(this.x,this.y,color)); particles.push(new LineRay(this.x,this.y,color)); } } }}
 
-class LineRay{
-  constructor(x,y,color){
-    this.x=x; this.y=y;
-    this.angle=Math.random()*Math.PI*2;
-    this.maxLength=Math.random()*200+150;
-    this.currentLength=0;
-    this.speed=Math.random()*3+2;
-    this.life=80; this.color=color;
-  }
-  update(){this.currentLength+=this.speed;if(this.currentLength>this.maxLength)this.currentLength=this.maxLength; this.life--;}
-  draw(){ctx.save(); ctx.globalAlpha=this.life/80; ctx.strokeStyle=this.color; ctx.lineWidth=3; ctx.shadowBlur=20; ctx.shadowColor=this.color; ctx.beginPath(); ctx.moveTo(this.x,this.y); ctx.lineTo(this.x+Math.cos(this.angle)*this.currentLength,this.y+Math.sin(this.angle)*this.currentLength); ctx.stroke(); ctx.restore();}
-}
-
-// ===== ROCKET CLASS =====
-class Rocket{
-  constructor(side){
-    this.x = side==="left"? 50+Math.random()*50 : innerWidth-100-Math.random()*50;
-    this.y = canvas.height;
-    this.vy = 1.4+Math.random()*0.8; 
-    this.vx = (Math.random()-0.5)*0.6;
-    this.targetY=Math.random()*canvas.height*0.35+80;
-    this.exploded=false;
-    this.sway=Math.random()*0.03+0.015;
-    this.angle=Math.random()*Math.PI*2;
-  }
-  update(){
-    this.x+=Math.sin(this.angle)*this.vx; this.angle+=this.sway; this.y-=this.vy;
-    for(let i=0;i<6;i++) particles.push(new Trail(this.x+(Math.random()-0.5)*6,this.y+15));
-    for(let i=0;i<2;i++) particles.push(new FireParticle(this.x,this.y));
-    if(this.y<=this.targetY && !this.exploded){ this.explode(); this.exploded=true; }
-  }
-  draw(){ctx.fillStyle="#ff9f1c"; ctx.fillRect(this.x,this.y,5,16);}
-  
-  // ===== 10 DIFFERENT EXPLOSION TYPES =====
-  explode(){
-    flashAlpha=0.6; flashDiv.style.transition='opacity 0.4s ease-out'; flashDiv.style.opacity=flashAlpha;
-    setTimeout(()=>{flashDiv.style.opacity=0;},400);
-
-    const type=Math.floor(Math.random()*10);
-    switch(type){
-      case 0: this.classicSparks(); break;
-      case 1: this.lineRays(); break;
-      case 2: this.spiralBurst(); break;
-      case 3: this.carnationFlower(); break;
-      case 4: this.multiColorShower(); break;
-      case 5: this.neonGlow(); break;
-      case 6: this.randomSwirl(); break;
-      case 7: this.sparkRing(); break;
-      case 8: this.starCluster(); break;
-      case 9: this.largeWave(); break;
-    }
-  }
-
-  classicSparks(){
-    for(let i=0;i<150;i++){
-      let color=pinkColors[Math.floor(Math.random()*pinkColors.length)];
-      particles.push(new Spark(this.x,this.y,color));
-      particles.push(new LineRay(this.x,this.y,color));
-    }
-  }
-  
-  lineRays(){
-    for(let i=0;i<12;i++){
-      let color=pinkColors[Math.floor(Math.random()*pinkColors.length)];
-      particles.push(new LineRay(this.x,this.y,color));
-    }
-  }
-
-  spiralBurst(){
-    for(let i=0;i<120;i++){
-      let t=i*0.1;
-      let sx=this.x+50*Math.cos(t)*Math.sin(t*2);
-      let sy=this.y+50*Math.sin(t)*Math.cos(t*2);
-      let color=pinkColors[Math.floor(Math.random()*pinkColors.length)];
-      particles.push(new Spark(sx,sy,color));
-    }
-  }
-
-  carnationFlower(){
-    for(let i=0;i<250;i++){
-      let angle=(i/250)*Math.PI*4;
-      let radius=50*Math.sqrt(i/250);
-      let sx=this.x+radius*Math.cos(angle);
-      let sy=this.y+radius*Math.sin(angle);
-      let color=pinkColors[Math.floor(Math.random()*pinkColors.length)];
-      particles.push(new Spark(sx,sy,color));
-    }
-  }
-
-  multiColorShower(){
-    const colors=["#ff4f9a","#ff6fae","#ff85c0","#ffb3d1","#ff80aa","#ff9fcf","#fff9c4","#a0ffe0","#9fcfff"];
-    for(let i=0;i<150;i++){
-      let color=colors[Math.floor(Math.random()*colors.length)];
-      particles.push(new Spark(this.x,this.y,color));
-      particles.push(new LineRay(this.x,this.y,color));
-    }
-  }
-
-  neonGlow(){
-    for(let i=0;i<100;i++){
-      let color=pinkColors[Math.floor(Math.random()*pinkColors.length)];
-      let spark=new Spark(this.x,this.y,color);
-      particles.push(spark);
-      particles.push(new LineRay(this.x,this.y,color));
-    }
-  }
-
-  randomSwirl(){
-    for(let i=0;i<180;i++){
-      let angle=Math.random()*Math.PI*2;
-      let radius=Math.random()*60;
-      let sx=this.x+radius*Math.cos(angle);
-      let sy=this.y+radius*Math.sin(angle);
-      let color=pinkColors[Math.floor(Math.random()*pinkColors.length)];
-      particles.push(new Spark(sx,sy,color));
-    }
-  }
-
-  sparkRing(){
-    for(let i=0;i<100;i++){
-      let angle=(i/100)*Math.PI*2;
-      let radius=40;
-      let sx=this.x+radius*Math.cos(angle);
-      let sy=this.y+radius*Math.sin(angle);
-      let color=pinkColors[Math.floor(Math.random()*pinkColors.length)];
-      particles.push(new Spark(sx,sy,color));
-    }
-  }
-
-  starCluster(){
-    for(let i=0;i<60;i++){
-      let sx=this.x+Math.random()*50-25;
-      let sy=this.y+Math.random()*50-25;
-      let color=pinkColors[Math.floor(Math.random()*pinkColors.length)];
-      particles.push(new Spark(sx,sy,color));
-      particles.push(new LineRay(sx,sy,color));
-    }
-  }
-
-  largeWave(){
-    for(let i=0;i<200;i++){
-      let t=i*0.05;
-      let sx=this.x+Math.sin(t*2)*70;
-      let sy=this.y+Math.cos(t*3)*70;
-      let color=pinkColors[Math.floor(Math.random()*pinkColors.length)];
-      particles.push(new Spark(sx,sy,color));
-    }
-  }
-}
+// ===== HIGHLIGHT ROCKET =====
+let highlightFired=false;
+class HighlightRocket extends Rocket{ constructor(side){ super(side); this.isHighlight=true; this.upDelay=2000; this.upTime=0;} update(){ if(!this.exploded){ this.x+=Math.sin(this.angle)*this.vx; this.angle+=this.sway; this.y-=this.vy; this.upTime+=16; for(let i=0;i<6;i++) particles.push(new Trail(this.x+(Math.random()-0.5)*6,this.y+15)); for(let i=0;i<2;i++) particles.push(new FireParticle(this.x,this.y)); if(this.y<=this.targetY && this.upTime>=this.upDelay){this.explode(); this.exploded=true;} } } explode(){ if(!highlightFired){ highlightFired=true; document.body.style.background='radial-gradient(circle, #000010 0%, #000000 100%)'; for(let i=0;i<50;i++){ starField.push(new Star()); } } flashAlpha=0.6; flashDiv.style.transition='opacity 0.4s ease-out'; flashDiv.style.opacity=flashAlpha; setTimeout(()=>{flashDiv.style.opacity=0;},400); for(let i=0;i<200;i++){ let t=i*0.05; let sx=this.x+10*Math.pow(Math.sin(t),3)*6; let sy=this.y-(7*Math.cos(t)-2.5*Math.cos(2*t))*6; let color=pinkColors[Math.floor(Math.random()*pinkColors.length)]; particles.push(new Spark(sx,sy,color)); particles.push(new LineRay(this.x,this.y,color)); } }}
 
 // ===== FIREWORKS BATCH CONTROL =====
 let batchActive=false;
-function launchBatch(){
-  if(batchActive) return;
-  batchActive=true;
-  rockets.push(new Rocket("left"));
-  rockets.push(new Rocket("left"));
-  rockets.push(new Rocket("right"));
-  rockets.push(new Rocket("right"));
-  setTimeout(()=>{ batchActive=false; },12000); // 12s delay
-}
+function launchBatch(){ if(batchActive) return; batchActive=true; rockets.push(new Rocket("left")); rockets.push(new Rocket("left")); rockets.push(new Rocket("right")); rockets.push(new Rocket("right")); rockets.push(new HighlightRocket("left")); rockets.push(new HighlightRocket("right")); setTimeout(()=>{ batchActive=false; },8000);}
 launchBatch();
-setInterval(launchBatch, 16000);
+setInterval(launchBatch, 12000);
 
 // ===== FIREWORKS ANIMATE =====
-function animate(){
+function animate(){ 
   ctx.clearRect(0,0,canvas.width,canvas.height);
-  rockets.forEach((r,i)=>{r.update(); r.draw(); if(r.exploded) rockets.splice(i,1);});
-  particles.forEach((p,i)=>{p.update(); p.draw(); if(p.life<=0) particles.splice(i,1);});
+  starField.forEach(s=>{s.update(); s.draw();});
+  rockets.forEach((r,i)=>{ r.update(); r.draw(); if(r.exploded) rockets.splice(i,1); });
+  particles.forEach((p,i)=>{ p.update(); p.draw(); if(p.life<=0) particles.splice(i,1); });
   requestAnimationFrame(animate);
 }
 animate();
 
 // ===== WATERFALL / FALLING STAR EFFECT =====
 let waterfallParticles=[];
-class WaterfallStar{
-  constructor(){
-    this.x=Math.random()*canvas.width;
-    this.y=-10-Math.random()*100;
-    this.length=10+Math.random()*20;
-    this.speed=0.5+Math.random()*1.2;
-    this.opacity=0.3+Math.random()*0.7;
-    this.width=1+Math.random()*2;
-    this.color=pinkColors[Math.floor(Math.random()*pinkColors.length)];
-  }
-  update(){
-    this.y+=this.speed;
-    this.opacity-=0.002;
-    if(this.opacity<=0) this.reset();
-  }
-  reset(){
-    this.x=Math.random()*canvas.width;
-    this.y=-10-Math.random()*100;
-    this.opacity=0.3+Math.random()*0.7;
-    this.speed=0.5+Math.random()*1.2;
-    this.width=1+Math.random()*2;
-    this.color=pinkColors[Math.floor(Math.random()*pinkColors.length)];
-  }
-  draw(){ctx.strokeStyle=this.color; ctx.globalAlpha=this.opacity; ctx.lineWidth=this.width; ctx.beginPath(); ctx.moveTo(this.x,this.y); ctx.lineTo(this.x,this.y+this.length); ctx.stroke(); ctx.globalAlpha=1;}
+class WaterfallStar{ constructor(){ this.x=Math.random()*canvas.width; this.y=-10-Math.random()*100; this.length=10+Math.random()*20; this.speed=0.5+Math.random()*1.2; this.opacity=0.3+Math.random()*0.7; this.width=1+Math.random()*2; this.color=pinkColors[Math.floor(Math.random()*pinkColors.length)]; }
+update(){ this.y+=this.speed; this.opacity-=0.002; if(this.opacity<=0) this.reset(); } reset(){ this.x=Math.random()*canvas.width; this.y=-10-Math.random()*100; this.opacity=0.3+Math.random()*0.7; this.speed=0.5+Math.random()*1.2; this.width=1+Math.random()*2; this.color=pinkColors[Math.floor(Math.random()*pinkColors.length)]; }
+draw(){ ctx.strokeStyle=this.color; ctx.globalAlpha=this.opacity; ctx.lineWidth=this.width; ctx.beginPath(); ctx.moveTo(this.x,this.y); ctx.lineTo(this.x,this.y+this.length); ctx.stroke(); ctx.globalAlpha=1; }
 }
 for(let i=0;i<120;i++) waterfallParticles.push(new WaterfallStar());
 function animateWaterfall(){ waterfallParticles.forEach(s=>{s.update(); s.draw();}); requestAnimationFrame(animateWaterfall);}

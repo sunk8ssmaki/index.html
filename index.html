@@ -231,7 +231,7 @@ function goNext(current,next){
 
 function restart(){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById("screen1").classList.add("active');
+  document.getElementById("screen1").classList.add("active");
 }
 
 // ===== FIREWORKS LOGIC =====
@@ -254,7 +254,7 @@ class FireParticle{
     this.x=x+(Math.random()-0.5)*8;
     this.y=y;
     this.vx=(Math.random()-0.5)*0.7;
-    this.vy=-Math.random()*0.8; // slightly slower
+    this.vy=-Math.random()*1;
     this.life=50+Math.random()*30;
     this.size=3+Math.random()*3;
     this.color=Math.random()<0.85?pinkColors[Math.floor(Math.random()*pinkColors.length)]:accentColors[Math.floor(Math.random()*accentColors.length)];
@@ -282,7 +282,7 @@ class Trail{
 class Spark{
   constructor(x,y,color){
     const a=Math.random()*Math.PI*2;
-    const s=Math.random()*8+2; // slower spread
+    const s=Math.random()*12+3;
     this.x=x; this.y=y;
     this.vx=Math.cos(a)*s;
     this.vy=Math.sin(a)*s;
@@ -293,18 +293,45 @@ class Spark{
   draw(){ctx.fillStyle=this.color; ctx.fillRect(this.x,this.y,3,3);}
 }
 
+class LineRay{
+  constructor(x,y,color){
+    this.x=x; this.y=y;
+    this.angle=Math.random()*Math.PI*2;
+    this.maxLength=Math.random()*200+150;
+    this.currentLength=0;
+    this.speed=Math.random()*5+3;
+    this.life=80;
+    this.color=color;
+  }
+  update(){this.currentLength+=this.speed;if(this.currentLength>this.maxLength)this.currentLength=this.maxLength; this.life--;}
+  draw(){
+    ctx.save();
+    ctx.globalAlpha=this.life/80;
+    ctx.strokeStyle=this.color;
+    ctx.lineWidth=3;
+    ctx.shadowBlur=20;
+    ctx.shadowColor=this.color;
+    ctx.beginPath();
+    ctx.moveTo(this.x,this.y);
+    ctx.lineTo(this.x+Math.cos(this.angle)*this.currentLength,this.y+Math.sin(this.angle)*this.currentLength);
+    ctx.stroke();
+    ctx.restore();
+  }
+}
+
 class Rocket{
   constructor(side){
     this.x = side==="left"? 50+Math.random()*50 : innerWidth-100-Math.random()*50;
     this.y = canvas.height;
-    this.vy = 1.2+Math.random()*0.5; // slower
-    this.vx = (Math.random()-0.5)*1.0;
+    this.vy = 1.5+Math.random();
+    this.vx = (Math.random()-0.5)*1.2;
     this.targetY=Math.random()*canvas.height*0.35+80;
     this.exploded=false;
     this.sway=Math.random()*0.03+0.015;
     this.angle=Math.random()*Math.PI*2;
   }
   update(){
+    // ✅ Removed screen1 check to allow fireworks on all screens
     this.x+=Math.sin(this.angle)*this.vx; this.angle+=this.sway; this.y-=this.vy;
     for(let i=0;i<6;i++) particles.push(new Trail(this.x+(Math.random()-0.5)*6,this.y+15));
     for(let i=0;i<2;i++) particles.push(new FireParticle(this.x,this.y));
@@ -327,6 +354,7 @@ let highlightFired=false;
 class HighlightRocket extends Rocket{
   constructor(side){ super(side); this.isHighlight=true; this.upDelay=3000; this.upTime=0; }
   update(){
+    // ✅ Removed screen1 check
     if(!this.exploded){
       this.x+=Math.sin(this.angle)*this.vx;
       this.angle+=this.sway;
@@ -364,24 +392,12 @@ class HighlightRocket extends Rocket{
   }
 }
 
-// ===== SEQUENTIAL BATCH WITH 3s DELAY AFTER POP =====
-let batchQueue=["left","left","right","right"];
-let currentIndex=0;
-
-function launchRocketSequentially(){
-  if(currentIndex>=batchQueue.length){
-    currentIndex=0;
-    // Wait 3 seconds after the batch finishes
-    setTimeout(launchRocketSequentially,3000);
-    return;
-  }
-  let side=batchQueue[currentIndex];
-  if(Math.random()<0.5) rockets.push(new Rocket(side)); else rockets.push(new HighlightRocket(side));
-  currentIndex++;
-  // Launch next rocket after 1 second
-  setTimeout(launchRocketSequentially,1000);
-}
-launchRocketSequentially();
+// ===== FIREWORKS BATCHES =====
+setInterval(()=>{
+  rockets.push(new Rocket("left"));
+  rockets.push(new Rocket("right"));
+  rockets.push(new HighlightRocket("left"));
+},4000);
 
 // ===== FIREWORKS ANIMATE =====
 function animate(){
@@ -400,21 +416,21 @@ class WaterfallStar{
     this.x=Math.random()*canvas.width;
     this.y=-10-Math.random()*100;
     this.length=10+Math.random()*20;
-    this.speed=0.7+Math.random()*1.5; // slower
+    this.speed=1+Math.random()*2;
     this.opacity=0.3+Math.random()*0.7;
     this.width=1+Math.random()*2;
     this.color=pinkColors[Math.floor(Math.random()*pinkColors.length)];
   }
   update(){
     this.y+=this.speed;
-    this.opacity-=0.002; // slower fade
+    this.opacity-=0.003;
     if(this.opacity<=0) this.reset();
   }
   reset(){
     this.x=Math.random()*canvas.width;
     this.y=-10-Math.random()*100;
     this.opacity=0.3+Math.random()*0.7;
-    this.speed=0.7+Math.random()*1.5;
+    this.speed=1+Math.random()*2;
     this.width=1+Math.random()*2;
     this.color=pinkColors[Math.floor(Math.random()*pinkColors.length)];
   }
@@ -441,4 +457,5 @@ function animateWaterfall(){
 animateWaterfall();
 </script>
 </body>
-</html>
+</html> 
+

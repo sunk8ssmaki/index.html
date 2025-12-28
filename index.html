@@ -28,7 +28,6 @@ body {
   right: 20px;
   z-index: 20;
 }
-
 #musicOverlay button {
   padding: 12px 24px;
   font-size: 16px;
@@ -40,7 +39,6 @@ body {
   cursor: pointer;
   transition: 0.3s;
 }
-
 #musicOverlay button:hover {
   transform: scale(1.05);
   background: #ff0f7a;
@@ -62,12 +60,10 @@ body {
   transition: 1s;
   z-index: 5;
 }
-
 .screen.active {
   opacity: 1;
   pointer-events: auto;
 }
-
 .title {
   font-size: 2.4rem;
   color: #ff2f92;
@@ -75,7 +71,6 @@ body {
   font-weight: 700;
   animation: fadeUp 0.8s ease forwards;
 }
-
 .subtitle {
   font-size: 1.2rem;
   color: #c72672;
@@ -92,7 +87,6 @@ body {
   overflow: hidden;
   animation: smoothPulse 4s infinite ease-in-out;
 }
-
 .profilePic {
   width: 100%;
   height: 100%;
@@ -111,7 +105,6 @@ body {
   cursor: pointer;
   transition: 0.4s;
 }
-
 .btn:hover {
   transform: scale(1.12) translateY(-3px);
   background: #ff0f7a;
@@ -136,7 +129,6 @@ body {
   from {opacity: 0; transform: translateY(40px);}
   to {opacity: 1; transform: translateY(0);}
 }
-
 @keyframes smoothPulse {
   0%,100% {transform: scale(1);}
   50% {transform: scale(1.05);}
@@ -149,7 +141,6 @@ body {
   z-index: 1;
   pointer-events: none;
 }
-
 #fireworksFlash {
   position: fixed;
   inset: 0;
@@ -204,7 +195,6 @@ let player;
 function onYouTubeIframeAPIReady() {
   player = new YT.Player("bgMusic",{events:{}});
 }
-
 document.getElementById("playMusic").onclick = () => {
   if(player) player.playVideo();
   document.getElementById("musicOverlay").style.display = "none";
@@ -239,8 +229,8 @@ const canvas=document.getElementById("fireworks");
 const ctx=canvas.getContext("2d");
 const flashDiv=document.getElementById("fireworksFlash");
 
-function resize(){canvas.width=innerWidth;canvas.height=innerHeight;}
-resize();
+function resize(){canvas.width=innerWidth;canvas.height=innerHeight;} 
+resize(); 
 addEventListener("resize",resize);
 
 let rockets=[], particles=[];
@@ -253,43 +243,29 @@ class FireParticle{
   constructor(x,y){
     this.x=x+(Math.random()-0.5)*8;
     this.y=y;
-    this.vx=(Math.random()-0.5)*0.7;
-    this.vy=-Math.random()*1;
+    this.vx=(Math.random()-0.5)*0.4; // slower
+    this.vy=-Math.random()*0.5;      // slower
     this.life=50+Math.random()*30;
     this.size=3+Math.random()*3;
     this.color=Math.random()<0.85?pinkColors[Math.floor(Math.random()*pinkColors.length)]:accentColors[Math.floor(Math.random()*accentColors.length)];
   }
   update(){this.x+=this.vx; this.y+=this.vy; this.life--;}
-  draw(){
-    ctx.fillStyle=this.color;
-    ctx.globalAlpha=this.life/60;
-    ctx.beginPath();
-    ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
-    ctx.fill();
-    ctx.globalAlpha=1;
-  }
+  draw(){ctx.fillStyle=this.color; ctx.globalAlpha=this.life/60; ctx.beginPath(); ctx.arc(this.x,this.y,this.size,0,Math.PI*2); ctx.fill(); ctx.globalAlpha=1;}
 }
 
 class Trail{
   constructor(x,y){this.x=x; this.y=y; this.life=40;}
   update(){this.life--;}
-  draw(){
-    ctx.fillStyle=`rgba(255,140,0,${this.life/40})`;
-    ctx.fillRect(this.x,this.y,3,3);
-  }
+  draw(){ctx.fillStyle=`rgba(255,140,0,${this.life/40})`; ctx.fillRect(this.x,this.y,3,3);}
 }
 
 class Spark{
   constructor(x,y,color){
-    const a=Math.random()*Math.PI*2;
-    const s=Math.random()*12+3;
-    this.x=x; this.y=y;
-    this.vx=Math.cos(a)*s;
-    this.vy=Math.sin(a)*s;
-    this.life=140;
-    this.color=color;
+    const a=Math.random()*Math.PI*2; 
+    const s=Math.random()*6+2; // slower
+    this.x=x; this.y=y; this.vx=Math.cos(a)*s; this.vy=Math.sin(a)*s; this.life=140; this.color=color;
   }
-  update(){this.x+=this.vx; this.y+=this.vy; this.vy+=0.02; this.life--;}
+  update(){this.x+=this.vx; this.y+=this.vy; this.vy+=0.01; this.life--;}
   draw(){ctx.fillStyle=this.color; ctx.fillRect(this.x,this.y,3,3);}
 }
 
@@ -299,39 +275,25 @@ class LineRay{
     this.angle=Math.random()*Math.PI*2;
     this.maxLength=Math.random()*200+150;
     this.currentLength=0;
-    this.speed=Math.random()*5+3;
-    this.life=80;
-    this.color=color;
+    this.speed=Math.random()*2+1.5; // slower
+    this.life=80; this.color=color;
   }
   update(){this.currentLength+=this.speed;if(this.currentLength>this.maxLength)this.currentLength=this.maxLength; this.life--;}
-  draw(){
-    ctx.save();
-    ctx.globalAlpha=this.life/80;
-    ctx.strokeStyle=this.color;
-    ctx.lineWidth=3;
-    ctx.shadowBlur=20;
-    ctx.shadowColor=this.color;
-    ctx.beginPath();
-    ctx.moveTo(this.x,this.y);
-    ctx.lineTo(this.x+Math.cos(this.angle)*this.currentLength,this.y+Math.sin(this.angle)*this.currentLength);
-    ctx.stroke();
-    ctx.restore();
-  }
+  draw(){ctx.save(); ctx.globalAlpha=this.life/80; ctx.strokeStyle=this.color; ctx.lineWidth=3; ctx.shadowBlur=20; ctx.shadowColor=this.color; ctx.beginPath(); ctx.moveTo(this.x,this.y); ctx.lineTo(this.x+Math.cos(this.angle)*this.currentLength,this.y+Math.sin(this.angle)*this.currentLength); ctx.stroke(); ctx.restore();}
 }
 
 class Rocket{
   constructor(side){
     this.x = side==="left"? 50+Math.random()*50 : innerWidth-100-Math.random()*50;
     this.y = canvas.height;
-    this.vy = 1.5+Math.random();
-    this.vx = (Math.random()-0.5)*1.2;
+    this.vy = 0.8+Math.random()*0.7; // slower
+    this.vx = (Math.random()-0.5)*0.6; // slower
     this.targetY=Math.random()*canvas.height*0.35+80;
     this.exploded=false;
     this.sway=Math.random()*0.03+0.015;
     this.angle=Math.random()*Math.PI*2;
   }
   update(){
-    // ✅ Removed screen1 check to allow fireworks on all screens
     this.x+=Math.sin(this.angle)*this.vx; this.angle+=this.sway; this.y-=this.vy;
     for(let i=0;i<6;i++) particles.push(new Trail(this.x+(Math.random()-0.5)*6,this.y+15));
     for(let i=0;i<2;i++) particles.push(new FireParticle(this.x,this.y));
@@ -354,7 +316,6 @@ let highlightFired=false;
 class HighlightRocket extends Rocket{
   constructor(side){ super(side); this.isHighlight=true; this.upDelay=3000; this.upTime=0; }
   update(){
-    // ✅ Removed screen1 check
     if(!this.exploded){
       this.x+=Math.sin(this.angle)*this.vx;
       this.angle+=this.sway;
@@ -392,12 +353,21 @@ class HighlightRocket extends Rocket{
   }
 }
 
-// ===== FIREWORKS BATCHES =====
-setInterval(()=>{
+// ===== FIREWORKS BATCH CONTROL =====
+let batchActive=false;
+function launchBatch(){
+  if(batchActive) return;
+  batchActive=true;
+  rockets.push(new Rocket("left"));
   rockets.push(new Rocket("left"));
   rockets.push(new Rocket("right"));
+  rockets.push(new Rocket("right"));
   rockets.push(new HighlightRocket("left"));
-},4000);
+  rockets.push(new HighlightRocket("right"));
+  setTimeout(()=>{ batchActive=false; },8000); // 8s delay before next batch
+}
+launchBatch();
+setInterval(launchBatch, 12000); // every 12s (4 rockets + 8s delay)
 
 // ===== FIREWORKS ANIMATE =====
 function animate(){
@@ -410,40 +380,30 @@ animate();
 
 // ===== WATERFALL / FALLING STAR EFFECT =====
 let waterfallParticles=[];
-
 class WaterfallStar{
   constructor(){
     this.x=Math.random()*canvas.width;
     this.y=-10-Math.random()*100;
     this.length=10+Math.random()*20;
-    this.speed=1+Math.random()*2;
+    this.speed=0.5+Math.random()*1.2; // slower
     this.opacity=0.3+Math.random()*0.7;
     this.width=1+Math.random()*2;
     this.color=pinkColors[Math.floor(Math.random()*pinkColors.length)];
   }
   update(){
     this.y+=this.speed;
-    this.opacity-=0.003;
+    this.opacity-=0.002;
     if(this.opacity<=0) this.reset();
   }
   reset(){
     this.x=Math.random()*canvas.width;
     this.y=-10-Math.random()*100;
     this.opacity=0.3+Math.random()*0.7;
-    this.speed=1+Math.random()*2;
+    this.speed=0.5+Math.random()*1.2;
     this.width=1+Math.random()*2;
     this.color=pinkColors[Math.floor(Math.random()*pinkColors.length)];
   }
-  draw(){
-    ctx.strokeStyle=this.color;
-    ctx.globalAlpha=this.opacity;
-    ctx.lineWidth=this.width;
-    ctx.beginPath();
-    ctx.moveTo(this.x,this.y);
-    ctx.lineTo(this.x,this.y+this.length);
-    ctx.stroke();
-    ctx.globalAlpha=1;
-  }
+  draw(){ctx.strokeStyle=this.color; ctx.globalAlpha=this.opacity; ctx.lineWidth=this.width; ctx.beginPath(); ctx.moveTo(this.x,this.y); ctx.lineTo(this.x,this.y+this.length); ctx.stroke(); ctx.globalAlpha=1;}
 }
 
 // Initialize 120 waterfall stars
@@ -457,5 +417,4 @@ function animateWaterfall(){
 animateWaterfall();
 </script>
 </body>
-</html> 
-
+</html>

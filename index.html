@@ -254,7 +254,7 @@ class FireParticle{
     this.x=x+(Math.random()-0.5)*8;
     this.y=y;
     this.vx=(Math.random()-0.5)*0.7;
-    this.vy=-Math.random()*1;
+    this.vy=-Math.random()*0.8; // slightly slower
     this.life=50+Math.random()*30;
     this.size=3+Math.random()*3;
     this.color=Math.random()<0.85?pinkColors[Math.floor(Math.random()*pinkColors.length)]:accentColors[Math.floor(Math.random()*accentColors.length)];
@@ -282,7 +282,7 @@ class Trail{
 class Spark{
   constructor(x,y,color){
     const a=Math.random()*Math.PI*2;
-    const s=Math.random()*12+3;
+    const s=Math.random()*8+2; // slower spread
     this.x=x; this.y=y;
     this.vx=Math.cos(a)*s;
     this.vy=Math.sin(a)*s;
@@ -299,7 +299,7 @@ class LineRay{
     this.angle=Math.random()*Math.PI*2;
     this.maxLength=Math.random()*200+150;
     this.currentLength=0;
-    this.speed=Math.random()*5+3;
+    this.speed=Math.random()*3+2; // slower
     this.life=80;
     this.color=color;
   }
@@ -323,15 +323,14 @@ class Rocket{
   constructor(side){
     this.x = side==="left"? 50+Math.random()*50 : innerWidth-100-Math.random()*50;
     this.y = canvas.height;
-    this.vy = 1.5+Math.random();
-    this.vx = (Math.random()-0.5)*1.2;
+    this.vy = 1.2+Math.random()*0.5; // slower
+    this.vx = (Math.random()-0.5)*1.0;
     this.targetY=Math.random()*canvas.height*0.35+80;
     this.exploded=false;
     this.sway=Math.random()*0.03+0.015;
     this.angle=Math.random()*Math.PI*2;
   }
   update(){
-    // ✅ Removed screen1 check to allow fireworks on all screens
     this.x+=Math.sin(this.angle)*this.vx; this.angle+=this.sway; this.y-=this.vy;
     for(let i=0;i<6;i++) particles.push(new Trail(this.x+(Math.random()-0.5)*6,this.y+15));
     for(let i=0;i<2;i++) particles.push(new FireParticle(this.x,this.y));
@@ -354,7 +353,6 @@ let highlightFired=false;
 class HighlightRocket extends Rocket{
   constructor(side){ super(side); this.isHighlight=true; this.upDelay=3000; this.upTime=0; }
   update(){
-    // ✅ Removed screen1 check
     if(!this.exploded){
       this.x+=Math.sin(this.angle)*this.vx;
       this.angle+=this.sway;
@@ -392,12 +390,25 @@ class HighlightRocket extends Rocket{
   }
 }
 
-// ===== FIREWORKS BATCHES =====
-setInterval(()=>{
-  rockets.push(new Rocket("left"));
-  rockets.push(new Rocket("right"));
-  rockets.push(new HighlightRocket("left"));
-},4000);
+// ===== FIREWORKS BATCH SEQUENTIAL =====
+let batchRockets=[["left","left","right","right"],["left","left","right","right"]];
+let batchIndex=0;
+let rocketIndex=0;
+
+function launchBatch(){
+  if(batchIndex>=batchRockets.length) batchIndex=0;
+  let side=batchRockets[batchIndex][rocketIndex];
+  if(Math.random()<0.5) rockets.push(new Rocket(side)); else rockets.push(new HighlightRocket(side));
+  rocketIndex++;
+  if(rocketIndex>=batchRockets[batchIndex].length){
+    rocketIndex=0;
+    batchIndex++;
+    setTimeout(launchBatch,2000); // delay before next batch
+  } else {
+    setTimeout(launchBatch,1000); // delay between each rocket
+  }
+}
+launchBatch();
 
 // ===== FIREWORKS ANIMATE =====
 function animate(){
@@ -416,21 +427,21 @@ class WaterfallStar{
     this.x=Math.random()*canvas.width;
     this.y=-10-Math.random()*100;
     this.length=10+Math.random()*20;
-    this.speed=1+Math.random()*2;
+    this.speed=0.7+Math.random()*1.5; // slower
     this.opacity=0.3+Math.random()*0.7;
     this.width=1+Math.random()*2;
     this.color=pinkColors[Math.floor(Math.random()*pinkColors.length)];
   }
   update(){
     this.y+=this.speed;
-    this.opacity-=0.003;
+    this.opacity-=0.002; // slower fade
     if(this.opacity<=0) this.reset();
   }
   reset(){
     this.x=Math.random()*canvas.width;
     this.y=-10-Math.random()*100;
     this.opacity=0.3+Math.random()*0.7;
-    this.speed=1+Math.random()*2;
+    this.speed=0.7+Math.random()*1.5;
     this.width=1+Math.random()*2;
     this.color=pinkColors[Math.floor(Math.random()*pinkColors.length)];
   }
@@ -458,4 +469,3 @@ animateWaterfall();
 </script>
 </body>
 </html>
-

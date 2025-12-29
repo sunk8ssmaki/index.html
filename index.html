@@ -6,7 +6,7 @@
 <title>🌸 @sunk8ssmaki </title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'Segoe UI',sans-serif;background: linear-gradient(135deg,#ffd1dc,#fff);height:100vh;overflow:hidden;position:relative;transition:background 3s ease;}
+body{font-family:'Segoe UI',sans-serif;background: linear-gradient(135deg,#ffd1dc,#fff);height:100vh;overflow:hidden;position:relative;}
 #musicOverlay{position:fixed;top:20px;right:20px;z-index:20;}
 #musicOverlay button{padding:12px 24px;font-size:16px;border-radius:30px;background:#ff2f92;color:white;border:none;box-shadow:0 0 12px rgba(255,105,180,0.45);cursor:pointer;transition:0.3s;}
 #musicOverlay button:hover{transform:scale(1.05);background:#ff0f7a;}
@@ -23,28 +23,9 @@ body{font-family:'Segoe UI',sans-serif;background: linear-gradient(135deg,#ffd1d
 @keyframes smoothPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.05);}}
 #fireworks{position:fixed;inset:0;z-index:1;pointer-events:none;}
 #fireworksFlash{position:fixed;inset:0;z-index:2;pointer-events:none;background:white;opacity:0;}
-
-/* ===== NEW DREAMY BACKGROUND EFFECT ===== */
-#dreamyBg{position:fixed;inset:0;z-index:0;pointer-events:none;background:linear-gradient(135deg,#ffd1dc,#fff);background-size:400% 400%;animation:dayNightCycle 120s ease-in-out infinite;}
-@keyframes dayNightCycle{
-  0% {background: linear-gradient(135deg, #FFD1DC 0%, #FFE4B5 100%);} /* Dawn pink & peach */
-  25% {background: linear-gradient(135deg, #FFFACD 0%, #ADD8E6 100%);} /* Morning yellow & blue */
-  50% {background: linear-gradient(135deg, #FFA07A 0%, #FF69B4 100%);} /* Sunset warm pink */
-  75% {background: linear-gradient(135deg, #191970 0%, #4B0082 100%);} /* Night deep indigo */
-  100% {background: linear-gradient(135deg, #FFD1DC 0%, #FFE4B5 100%);} /* Back to Dawn */
-}
-/* Subtle haze overlay for dreamy depth */
-#dreamyOverlay{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(circle, rgba(255,255,255,0.08) 0%, rgba(0,0,0,0) 80%);animation:hazePulse 30s ease-in-out infinite;}
-@keyframes hazePulse{
-  0%,100%{opacity:0.08;}
-  50%{opacity:0.18;}
-}
 </style>
 </head>
 <body>
-
-<div id="dreamyBg"></div>
-<div id="dreamyOverlay"></div>
 
 <div id="musicOverlay"><button id="playMusic" class="btn">Play Music</button></div>
 <iframe id="bgMusic" width="0" height="0" src="https://www.youtube.com/embed/3FCgPUKPBVw?enablejsapi=1&loop=1&playlist=3FCgPUKPBVw" frameborder="0" allow="autoplay"></iframe>
@@ -100,9 +81,130 @@ class Trail{constructor(x,y){this.x=x;this.y=y;this.life=40;}update(){this.life-
 class Spark{constructor(x,y,color){const a=Math.random()*Math.PI*2;const s=Math.random()*4+2;this.x=x;this.y=y;this.vx=Math.cos(a)*s;this.vy=Math.sin(a)*s;this.life=140;this.color=color;}update(){this.x+=this.vx;this.y+=this.vy;this.vy+=0.01;this.life--;}draw(){ctx.fillStyle=this.color;ctx.fillRect(this.x,this.y,3,3);}}
 class LineRay{constructor(x,y,color){this.x=x;this.y=y;this.angle=Math.random()*Math.PI*2;this.maxLength=Math.random()*150+100;this.currentLength=0;this.speed=Math.random()*1.5+0.5;this.life=80;this.color=color;}update(){this.currentLength+=this.speed;if(this.currentLength>this.maxLength)this.currentLength=this.maxLength;this.life--;}draw(){ctx.save();ctx.globalAlpha=this.life/80;ctx.strokeStyle=this.color;ctx.lineWidth=3;ctx.shadowBlur=20;ctx.shadowColor=this.color;ctx.beginPath();ctx.moveTo(this.x,this.y);ctx.lineTo(this.x+Math.cos(this.angle)*this.currentLength,this.y+Math.sin(this.angle)*this.currentLength);ctx.stroke();ctx.restore();}}
 
-// ===== ROCKET & HIGHLIGHT ROCKET LOGIC REMAINS EXACTLY AS YOUR ORIGINAL CODE =====
-// (kept intact as you strictly requested, including all 10 highlight explosions, waterfall, smart timing, animate, etc.)
+// ===== ROCKET =====
+class Rocket{constructor(side){this.x=side==="left"?50+Math.random()*50:innerWidth-100-Math.random()*50;this.y=canvas.height;this.vy=0.8+Math.random()*0.3;this.vx=(Math.random()-0.5)*0.3;this.targetY=Math.random()*canvas.height*0.35+80;this.exploded=false;this.sway=Math.random()*0.03+0.015;this.angle=Math.random()*Math.PI*2;}update(){this.x+=Math.sin(this.angle)*this.vx;this.angle+=this.sway;this.y-=this.vy;for(let i=0;i<6;i++)particles.push(new Trail(this.x+(Math.random()-0.5)*6,this.y+15));for(let i=0;i<2;i++)particles.push(new FireParticle(this.x,this.y));if(this.y<=this.targetY&&!this.exploded){this.explode();this.exploded=true;}}draw(){ctx.fillStyle="#ff9f1c";ctx.fillRect(this.x,this.y,5,16);}explode(){flashAlpha=0.6;flashDiv.style.transition='opacity 0.4s ease-out';flashDiv.style.opacity=flashAlpha;setTimeout(()=>{flashDiv.style.opacity=0;},400);if(!darkSky){darkSky=true;document.body.style.background='radial-gradient(circle,#000010 0%,#000000 100%)';}createHighlightExplosion(this.x,this.y);}}
 
+// ===== HIGHLIGHT ROCKET =====
+class HighlightRocket extends Rocket{constructor(side){super(side);this.isHighlight=true;this.upDelay=2000;this.upTime=0;}update(){if(!this.exploded){this.x+=Math.sin(this.angle)*this.vx;this.angle+=this.sway;this.y-=this.vy;this.upTime+=16;for(let i=0;i<6;i++)particles.push(new Trail(this.x+(Math.random()-0.5)*6,this.y+15));for(let i=0;i<2;i++)particles.push(new FireParticle(this.x,this.y));if(this.y<=this.targetY&&this.upTime>=this.upDelay){this.explode();this.exploded=true;}}}}
+
+// ===== 10 UNIQUE HIGHLIGHT EXPLOSIONS =====
+function createHighlightExplosion(x,y){
+  const explosionStyles = [
+    ()=>{for(let i=0;i<100;i++){let a=Math.random()*Math.PI*2;let r=Math.random()*6+3;let c=pinkColors[Math.floor(Math.random()*pinkColors.length)];particles.push(new Spark(x+r*Math.cos(a),y+r*Math.sin(a),c));}},
+    ()=>{for(let i=0;i<150;i++){particles.push(new LineRay(x,y,pinkColors[Math.floor(Math.random()*pinkColors.length)]));}},
+    ()=>{for(let i=0;i<80;i++){let a=Math.random()*Math.PI*2;let r=10+Math.random()*20;particles.push(new Spark(x+r*Math.cos(a),y+r*Math.sin(a),accentColors[Math.floor(Math.random()*accentColors.length)]));}},
+    ()=>{for(let i=0;i<60;i++){let a=Math.random()*Math.PI*2;let r=5+Math.random()*30;particles.push(new Spark(x+r*Math.cos(a),y+r*Math.sin(a),pinkColors[Math.floor(Math.random()*pinkColors.length)]));}},
+    ()=>{for(let i=0;i<70;i++){particles.push(new LineRay(x,y,accentColors[Math.floor(Math.random()*accentColors.length)]));}},
+    ()=>{for(let i=0;i<50;i++){let t=i*0.2;let sx=x+10*Math.pow(Math.sin(t),3)*6;let sy=y-(7*Math.cos(t)-2.5*Math.cos(2*t))*6;particles.push(new Spark(sx,sy,pinkColors[Math.floor(Math.random()*pinkColors.length)]));}},
+    ()=>{for(let i=0;i<120;i++){let a=Math.random()*Math.PI*2;particles.push(new Spark(x+Math.cos(a)*i/2,y+Math.sin(a)*i/2,pinkColors[Math.floor(Math.random()*pinkColors.length)]));}},
+    ()=>{for(let i=0;i<90;i++){particles.push(new LineRay(x,y,pinkColors[Math.floor(Math.random()*pinkColors.length)]));}},
+    ()=>{for(let i=0;i<80;i++){let a=Math.random()*Math.PI*2;particles.push(new Spark(x+Math.cos(a)*i,y+Math.sin(a)*i,accentColors[Math.floor(Math.random()*accentColors.length)]));}},
+    ()=>{for(let i=0;i<150;i++){particles.push(new Spark(x+Math.random()*20-10,y+Math.random()*20-10,pinkColors[Math.floor(Math.random()*pinkColors.length)]));}}
+  ];
+  explosionStyles[Math.floor(Math.random()*explosionStyles.length)]();
+
+  for(let i=0;i<20;i++){
+    let a=Math.random()*Math.PI*2;
+    let ray=new LineRay(x,y,pinkColors[Math.floor(Math.random()*pinkColors.length)]);
+    ray.angle=a;
+    particles.push(ray);
+  }
+}
+
+// ===== SMART TIMING CONTROL (EFFECTS MUST FINISH FIRST) =====
+let waitingForFinish = false;
+function checkIfClear(){
+  if(rockets.length === 0 && particles.length === 0){
+    waitingForFinish = false;
+    setTimeout(()=>{ launchBatch(); },500); // smooth new rise
+  } else {
+    requestAnimationFrame(checkIfClear);
+  }
+}
+
+function launchBatch(){
+  if(waitingForFinish) return;
+  waitingForFinish = true;
+
+  rockets.push(new Rocket("left"));
+  rockets.push(new Rocket("left"));
+  rockets.push(new Rocket("right"));
+  rockets.push(new Rocket("right"));
+  rockets.push(new HighlightRocket("left"));
+  rockets.push(new HighlightRocket("right"));
+
+  requestAnimationFrame(checkIfClear);
+}
+
+// ✨ Start only once
+launchBatch();
+
+// ===== ANIMATION LOOP =====
+function animate(){ctx.clearRect(0,0,canvas.width,canvas.height);starField.forEach(s=>{s.update();s.draw();});rockets.forEach((r,i)=>{r.update();r.draw();if(r.exploded)rockets.splice(i,1);});particles.forEach((p,i)=>{p.update();p.draw();if(p.life<=0)particles.splice(i,1);});requestAnimationFrame(animate);}
+animate();
+
+// ===== WATERFALL =====
+let waterfallParticles=[];
+class WaterfallStar{constructor(){this.x=Math.random()*canvas.width;this.y=-10-Math.random()*100;this.length=10+Math.random()*20;this.speed=0.5+Math.random()*1.2;this.opacity=0.3+Math.random()*0.7;this.width=1+Math.random()*2;this.color=pinkColors[Math.floor(Math.random()*pinkColors.length)];}update(){this.y+=this.speed;this.opacity-=0.002;if(this.opacity<=0)this.reset();}reset(){this.x=Math.random()*canvas.width;this.y=-10-Math.random()*100;this.opacity=0.3+Math.random()*0.7;this.speed=0.5+Math.random()*1.2;this.width=1+Math.random()*2;this.color=pinkColors[Math.floor(Math.random()*pinkColors.length)];}draw(){ctx.strokeStyle=this.color;ctx.globalAlpha=this.opacity;ctx.lineWidth=this.width;ctx.beginPath();ctx.moveTo(this.x,this.y);ctx.lineTo(this.x,this.y+this.length);ctx.stroke();ctx.globalAlpha=1;}}
+for(let i=0;i<120;i++)waterfallParticles.push(new WaterfallStar());
+function animateWaterfall(){waterfallParticles.forEach(s=>{s.update();s.draw();});requestAnimationFrame(animateWaterfall);}
+animateWaterfall();
+
+// ===== DEPTH SIMULATION =====
+// STARS
+starField.forEach(star => {
+  star.z = Math.random() * 2 + 0.5;
+  const originalUpdate = star.update;
+  const originalDraw = star.draw;
+  star.update = function(){
+    this.x += this.vx / this.z;
+    this.y += this.vy / this.z;
+    originalUpdate.call(this);
+  };
+  star.draw = function(){
+    ctx.fillStyle = `rgba(255,255,255,${this.opacity / this.z})`;
+    ctx.beginPath();
+    ctx.arc(this.x,this.y,this.radius / this.z,0,Math.PI*2);
+    ctx.fill();
+  };
+});
+
+// PARTICLES
+[FireParticle, Trail, Spark, LineRay].forEach(cls => {
+  const originalUpdate = cls.prototype.update;
+  const originalDraw = cls.prototype.draw;
+  cls.prototype.update = function(){
+    if(this.z === undefined) this.z = Math.random() * 2 + 0.5;
+    if(this.vx) this.x += this.vx / this.z;
+    if(this.vy) this.y += this.vy / this.z;
+    originalUpdate.call(this);
+  };
+  cls.prototype.draw = function(){
+    ctx.save();
+    ctx.scale(1/this.z,1/this.z);
+    originalDraw.call(this);
+    ctx.restore();
+  };
+});
+
+// WATERFALL DEPTH
+waterfallParticles.forEach(p => {
+  p.z = Math.random() * 2 + 0.5;
+  const originalUpdate = p.update;
+  const originalDraw = p.draw;
+  p.update = function(){
+    this.y += this.speed / this.z;
+    this.opacity -= 0.002 / this.z;
+    if(this.opacity <= 0) this.reset();
+    originalUpdate.call(this);
+  };
+  p.draw = function(){
+    ctx.globalAlpha = this.opacity / this.z;
+    ctx.lineWidth = this.width / this.z;
+    originalDraw.call(this);
+    ctx.globalAlpha = 1;
+  };
+});
 </script>
 </body>
 </html>

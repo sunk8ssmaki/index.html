@@ -139,7 +139,6 @@ function launchBatch(){
 // ✨ Start only once
 launchBatch();
 
-
 // ===== ANIMATION LOOP =====
 function animate(){ctx.clearRect(0,0,canvas.width,canvas.height);starField.forEach(s=>{s.update();s.draw();});rockets.forEach((r,i)=>{r.update();r.draw();if(r.exploded)rockets.splice(i,1);});particles.forEach((p,i)=>{p.update();p.draw();if(p.life<=0)particles.splice(i,1);});requestAnimationFrame(animate);}
 animate();
@@ -150,6 +149,62 @@ class WaterfallStar{constructor(){this.x=Math.random()*canvas.width;this.y=-10-M
 for(let i=0;i<120;i++)waterfallParticles.push(new WaterfallStar());
 function animateWaterfall(){waterfallParticles.forEach(s=>{s.update();s.draw();});requestAnimationFrame(animateWaterfall);}
 animateWaterfall();
+
+// ===== DEPTH SIMULATION =====
+// STARS
+starField.forEach(star => {
+  star.z = Math.random() * 2 + 0.5;
+  const originalUpdate = star.update;
+  const originalDraw = star.draw;
+  star.update = function(){
+    this.x += this.vx / this.z;
+    this.y += this.vy / this.z;
+    originalUpdate.call(this);
+  };
+  star.draw = function(){
+    ctx.fillStyle = `rgba(255,255,255,${this.opacity / this.z})`;
+    ctx.beginPath();
+    ctx.arc(this.x,this.y,this.radius / this.z,0,Math.PI*2);
+    ctx.fill();
+  };
+});
+
+// PARTICLES
+[FireParticle, Trail, Spark, LineRay].forEach(cls => {
+  const originalUpdate = cls.prototype.update;
+  const originalDraw = cls.prototype.draw;
+  cls.prototype.update = function(){
+    if(this.z === undefined) this.z = Math.random() * 2 + 0.5;
+    if(this.vx) this.x += this.vx / this.z;
+    if(this.vy) this.y += this.vy / this.z;
+    originalUpdate.call(this);
+  };
+  cls.prototype.draw = function(){
+    ctx.save();
+    ctx.scale(1/this.z,1/this.z);
+    originalDraw.call(this);
+    ctx.restore();
+  };
+});
+
+// WATERFALL DEPTH
+waterfallParticles.forEach(p => {
+  p.z = Math.random() * 2 + 0.5;
+  const originalUpdate = p.update;
+  const originalDraw = p.draw;
+  p.update = function(){
+    this.y += this.speed / this.z;
+    this.opacity -= 0.002 / this.z;
+    if(this.opacity <= 0) this.reset();
+    originalUpdate.call(this);
+  };
+  p.draw = function(){
+    ctx.globalAlpha = this.opacity / this.z;
+    ctx.lineWidth = this.width / this.z;
+    originalDraw.call(this);
+    ctx.globalAlpha = 1;
+  };
+});
 </script>
 </body>
 </html>

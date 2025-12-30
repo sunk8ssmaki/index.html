@@ -35,7 +35,7 @@ body{font-family:'Segoe UI',sans-serif;background: linear-gradient(135deg,#ffd1d
 
 <div class="screen active" id="screen1">
   <h1 class="title">Happy new year loml, Ashley Mariz! 💖</h1>
-  <h3 class="subtitle">46 days have passed since nagkakilala tayo babyy</h3>
+  <h3 class="subtitle"> 47 days have passed, crush pa din kita:> </h3>
   <div class="profileWrap"><img src="b7d77ac5-74f2-4386-a08c-74835678ada0.jpg" class="profilePic"></div>
   <button class="btn" onclick="goNext(1,2)">Continue ➜</button>
 </div>
@@ -48,8 +48,8 @@ body{font-family:'Segoe UI',sans-serif;background: linear-gradient(135deg,#ffd1d
   <button class="btn" onclick="goNext(3,4)">Next ➜</button>
 </div>
 <div class="screen" id="screen4">
-  <p class="msg" data-text="honhon every little thing you do, every smile mo, every word mo, it just makes my heart go dugdugsz in the best way possible po. i love you ashley not just for the happy moments natin, but lalo na sa mga times na kailangan mo ng comfort, or kahit feeling mo na hindi na natin kaya because i promise, i’ll never let you face things alone at makakaasa ka na every part of you will be loved be me──  palagi, iloveyou. happy new year sa atin─── we did it iris! :)  "></p>
-  <button class="btn" onclick="restart()">↺ iloveyousomuchh!</button>
+  <p class="msg" data-text="honhon every little thing you do, every smile mo, every word mo, it just makes my heart go dugdugsz in the best way possible po. i love you ashley not just for the happy moments natin, but lalo na sa mga times na kailangan mo ng comfort, or kahit feeling mo na hindi na natin kaya because i promise, i’ll never let you face things alone at makakaasa ka na every part of you will be loved be me──  palagi, iloveyou─── we did it iris! :)  "></p>
+  <button class="btn" onclick="restart()">↺ iloveyou!</button>
 </div>
 
 <script src="https://www.youtube.com/iframe_api"></script>
@@ -62,32 +62,26 @@ function typeText(el,text,speed=50){el.textContent='';let i=0;let interval=setIn
 function goNext(current,next){document.getElementById("screen"+current).classList.remove("active");let nextScreen=document.getElementById("screen"+next);nextScreen.classList.add("active");const msg=nextScreen.querySelector('.msg');if(msg)typeText(msg,msg.dataset.text,50);}
 function restart(){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById("screen1").classList.add("active");}
 
-// ===== CANVAS =====
 const canvas=document.getElementById("fireworks"); const ctx=canvas.getContext("2d"); const flashDiv=document.getElementById("fireworksFlash");
 function resize(){canvas.width=innerWidth;canvas.height=innerHeight;}resize();addEventListener("resize",resize);
 
 let rockets=[],particles=[],pinkColors=["#ff4f9a","#ff6fae","#ff85c0","#ffb3d1","#ff80aa","#ff9fcf"],accentColors=["#fff9c4","#fffacd"],flashAlpha=0;
 
-// ===== STAR SKY =====
 let darkSky=false;
 let starField=[];
 class Star{constructor(){this.x=Math.random()*canvas.width;this.y=Math.random()*canvas.height;this.radius=Math.random()*1.5+0.5;this.opacity=Math.random();this.vx=(Math.random()-0.5)*0.05;this.vy=(Math.random()-0.5)*0.05;} update(){this.x+=this.vx;this.y+=this.vy;if(this.x<0)this.x=canvas.width;if(this.x>canvas.width)this.x=0;if(this.y<0)this.y=canvas.height;if(this.y>canvas.height)this.y=0;} draw(){ctx.fillStyle=`rgba(255,255,255,${this.opacity})`;ctx.beginPath();ctx.arc(this.x,this.y,this.radius,0,Math.PI*2);ctx.fill();}}
 function initStars(){for(let i=0;i<150;i++)starField.push(new Star());}
 initStars();
 
-// ===== PARTICLE CLASSES =====
 class FireParticle{constructor(x,y){this.x=x+(Math.random()-0.5)*8;this.y=y;this.vx=(Math.random()-0.5)*0.3;this.vy=-Math.random()*0.3;this.life=50+Math.random()*30;this.size=3+Math.random()*3;this.color=Math.random()<0.85?pinkColors[Math.floor(Math.random()*pinkColors.length)]:accentColors[Math.floor(Math.random()*accentColors.length)];} update(){this.x+=this.vx;this.y+=this.vy;this.life--;} draw(){ctx.fillStyle=this.color;ctx.globalAlpha=this.life/60;ctx.beginPath();ctx.arc(this.x,this.y,this.size,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;}}
 class Trail{constructor(x,y){this.x=x;this.y=y;this.life=40;}update(){this.life--;}draw(){ctx.fillStyle=`rgba(255,140,0,${this.life/40})`;ctx.fillRect(this.x,this.y,3,3);}}
 class Spark{constructor(x,y,color){const a=Math.random()*Math.PI*2;const s=Math.random()*4+2;this.x=x;this.y=y;this.vx=Math.cos(a)*s;this.vy=Math.sin(a)*s;this.life=140;this.color=color;}update(){this.x+=this.vx;this.y+=this.vy;this.vy+=0.01;this.life--;}draw(){ctx.fillStyle=this.color;ctx.fillRect(this.x,this.y,3,3);}}
 class LineRay{constructor(x,y,color){this.x=x;this.y=y;this.angle=Math.random()*Math.PI*2;this.maxLength=Math.random()*150+100;this.currentLength=0;this.speed=Math.random()*1.5+0.5;this.life=80;this.color=color;}update(){this.currentLength+=this.speed;if(this.currentLength>this.maxLength)this.currentLength=this.maxLength;this.life--;}draw(){ctx.save();ctx.globalAlpha=this.life/80;ctx.strokeStyle=this.color;ctx.lineWidth=3;ctx.shadowBlur=20;ctx.shadowColor=this.color;ctx.beginPath();ctx.moveTo(this.x,this.y);ctx.lineTo(this.x+Math.cos(this.angle)*this.currentLength,this.y+Math.sin(this.angle)*this.currentLength);ctx.stroke();ctx.restore();}}
 
-// ===== ROCKET =====
 class Rocket{constructor(side){this.x=side==="left"?50+Math.random()*50:innerWidth-100-Math.random()*50;this.y=canvas.height;this.vy=0.8+Math.random()*0.3;this.vx=(Math.random()-0.5)*0.3;this.targetY=Math.random()*canvas.height*0.35+80;this.exploded=false;this.sway=Math.random()*0.03+0.015;this.angle=Math.random()*Math.PI*2;}update(){this.x+=Math.sin(this.angle)*this.vx;this.angle+=this.sway;this.y-=this.vy;for(let i=0;i<6;i++)particles.push(new Trail(this.x+(Math.random()-0.5)*6,this.y+15));for(let i=0;i<2;i++)particles.push(new FireParticle(this.x,this.y));if(this.y<=this.targetY&&!this.exploded){this.explode();this.exploded=true;}}draw(){ctx.fillStyle="#ff9f1c";ctx.fillRect(this.x,this.y,5,16);}explode(){flashAlpha=0.6;flashDiv.style.transition='opacity 0.4s ease-out';flashDiv.style.opacity=flashAlpha;setTimeout(()=>{flashDiv.style.opacity=0;},400);if(!darkSky){darkSky=true;document.body.style.background='radial-gradient(circle,#000010 0%,#000000 100%)';}createHighlightExplosion(this.x,this.y);}}
 
-// ===== HIGHLIGHT ROCKET =====
 class HighlightRocket extends Rocket{constructor(side){super(side);this.isHighlight=true;this.upDelay=2000;this.upTime=0;}update(){if(!this.exploded){this.x+=Math.sin(this.angle)*this.vx;this.angle+=this.sway;this.y-=this.vy;this.upTime+=16;for(let i=0;i<6;i++)particles.push(new Trail(this.x+(Math.random()-0.5)*6,this.y+15));for(let i=0;i<2;i++)particles.push(new FireParticle(this.x,this.y));if(this.y<=this.targetY&&this.upTime>=this.upDelay){this.explode();this.exploded=true;}}}}
 
-// ===== 10 UNIQUE HIGHLIGHT EXPLOSIONS =====
 function createHighlightExplosion(x,y){
   const explosionStyles = [
     ()=>{for(let i=0;i<100;i++){let a=Math.random()*Math.PI*2;let r=Math.random()*6+3;let c=pinkColors[Math.floor(Math.random()*pinkColors.length)];particles.push(new Spark(x+r*Math.cos(a),y+r*Math.sin(a),c));}},
@@ -111,7 +105,6 @@ function createHighlightExplosion(x,y){
   }
 }
 
-// ===== SMART TIMING CONTROL (EFFECTS MUST FINISH FIRST) =====
 let waitingForFinish = false;
 function checkIfClear(){
   if(rockets.length === 0 && particles.length === 0){
@@ -136,15 +129,12 @@ function launchBatch(){
   requestAnimationFrame(checkIfClear);
 }
 
-// ✨ Start only once
 launchBatch();
 
 
-// ===== ANIMATION LOOP =====
 function animate(){ctx.clearRect(0,0,canvas.width,canvas.height);starField.forEach(s=>{s.update();s.draw();});rockets.forEach((r,i)=>{r.update();r.draw();if(r.exploded)rockets.splice(i,1);});particles.forEach((p,i)=>{p.update();p.draw();if(p.life<=0)particles.splice(i,1);});requestAnimationFrame(animate);}
 animate();
 
-// ===== WATERFALL =====
 let waterfallParticles=[];
 class WaterfallStar{constructor(){this.x=Math.random()*canvas.width;this.y=-10-Math.random()*100;this.length=10+Math.random()*20;this.speed=0.5+Math.random()*1.2;this.opacity=0.3+Math.random()*0.7;this.width=1+Math.random()*2;this.color=pinkColors[Math.floor(Math.random()*pinkColors.length)];}update(){this.y+=this.speed;this.opacity-=0.002;if(this.opacity<=0)this.reset();}reset(){this.x=Math.random()*canvas.width;this.y=-10-Math.random()*100;this.opacity=0.3+Math.random()*0.7;this.speed=0.5+Math.random()*1.2;this.width=1+Math.random()*2;this.color=pinkColors[Math.floor(Math.random()*pinkColors.length)];}draw(){ctx.strokeStyle=this.color;ctx.globalAlpha=this.opacity;ctx.lineWidth=this.width;ctx.beginPath();ctx.moveTo(this.x,this.y);ctx.lineTo(this.x,this.y+this.length);ctx.stroke();ctx.globalAlpha=1;}}
 for(let i=0;i<120;i++)waterfallParticles.push(new WaterfallStar());
@@ -153,6 +143,7 @@ animateWaterfall();
 </script>
 </body>
 </html>
+
 
 
 
